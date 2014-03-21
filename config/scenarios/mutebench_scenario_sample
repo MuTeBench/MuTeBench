@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+	<parameters>
+		<events>
+			<event>														   
+				<!--the event will be executed first after 1 minute-->
+				<start>00:01:00</start> 								
+				
+				<!--repeat event execution after 5 minutes-->
+				<repeat>00:05:00</repeat>								
+				
+				<!--stop repeating after 13 minutes-->
+				<stopAfter>00:13:00</stopAfter>							
+				
+				<!--the first execution is associated to tenant ID 1-->
+				<firstTenantID>1</firstTenantID>						
+				
+				<!--create two tenants for each execution time-->
+				<tenantsPerExecution>2</tenantsPerExecution>			
+				
+				<!--increment used tenant ID by 3-->
+				<tenantIdIncrement>3</tenantIdIncrement>				
+				
+				<!--only execute workloads for each benchmark run-->
+				<actions>execute</actions>								
+				
+				<!--start each benchmark with configuration file 
+				mutebench_config_sample.xml -->
+				<configFile>config/mutebench_config_sample.xml</configFile>				
+				
+				<!--set SLAs in sla/standard.xml for each benchmark 
+				run and each tenant-->
+				<benchmarkSlaFile>config/sla/mutebench_sla_sample.xml</benchmarkSlaFile>	
+				
+				<!--send SLAs to a database with support of our 
+				SQL extensions-->
+				<sendSla>true</sendSla>									
+				
+				<!--benchmark to be executed-->
+				<benchmark>tpcc</benchmark>	
+			</event>
+	        <event>
+	          	<start>00:30:00</start>
+	          	<firstTenantID>1</firstTenantID>
+	          	<tenantsPerExecution>6</tenantsPerExecution>
+	          	<tenantIdIncrement>3</tenantIdIncrement>
+	          	<actions>clear</actions>
+	          	<configFile>config/mutebench_config_sample.xml</configFile>
+				<benchmark>tpcc</benchmark>							
+	          </removeTenant>
+	    	</event>
+		</events>

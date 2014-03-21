@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="benchmark">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="javac.target" value="1.6"/>
+    <property name="javac.source" value="1.6"/>
+
+    <!-- *************************************** CONFIGURATION *************************************** -->
+    
+    <property name="src.dir"                    location="src" />
+    <property name="tests.dir"                  location="tests" />
+    <property name="lib.dir"                    location="lib" />
+    <property name="build.dir"                  location="build" />
+    <property name="build.tests.dir"            location="${build.dir}/tests" />
+    <property name='build.testoutput.dir'       location='${build.dir}/testoutput' />
+
+    <path id='project.classpath'>
+        <pathelement location='${build.dir}' />
+        <pathelement location='${build.tests.dir}' />
+        <fileset dir='${lib.dir}'>
+            <include name='*.jar' />
+            <include name='hibernate/*.jar' />
+            <exclude name='ant.jar' />
+        </fileset>
+        <pathelement path="${java.class.path}"/>
+    </path>
+
+    <!-- *************************************** BUILDING *************************************** -->
+    
+    <target name="build"
+            description="Build the entire framework">
+        <fileset dir="${src.dir}" excludes="**/*.launch, **/*.java"/>
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        
+        <mkdir dir="${build.dir}/META-INF"/>
+        <copy file="${src.dir}/META-INF/persistence.xml" todir="${build.dir}/META-INF"/>
+        <javac debug="true" debuglevel="${debuglevel}" includeantruntime="false"
+               destdir="${build.dir}"
+               source="${javac.source}"
+               target="${javac.target}">
+            <src path="${src.dir}"/>
+            <classpath refid="project.classpath" />
+        </javac>
+        
+        <!-- Copy Files -->
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*-ddl.sql"/>
+                <include name="**/*-dialects.xml"/>
+                <include name="**/*.xsd"/>
+                <include name="**/histogram.*.gz"/>
+                <include name="**/table.*.gz"/>
+            </fileset>
+        </copy>
+        
+        <mkdir dir="${build.tests.dir}"/>
+        <javac debug="true" debuglevel="${debuglevel}" includeantruntime="false"
+               destdir="${build.tests.dir}"
+               source="${javac.source}"
+               target="${javac.target}">
+            <src path="${tests.dir}"/>
+            <classpath refid="project.classpath" />
+        </javac>
+    </target>
+
+    <target name="clean" description="Destroys all generated files and dirs.">
+        <delete dir="${build.dir}"/>
+    </target>
+        
+    <!-- *************************************** UTILITY *************************************** -->
+
+    <target name="dialects-export"
+            description="Export all of the SQL for a given benchmark to a dialects file">
+        <condition property="benchmark" value="">
+            <not><isset property="benchmark"/></not>
+        </condition>
+        <condition property="config" value="">
+            <not><isset property="config"/></not>
+        </condition>
+        
+        <java fork="yes" failonerror="true" classname="com.oltpbenchmark.multitenancy.MuTeBench">
+            <jvmarg value="-Xmx1024m" />
+            <jvmarg value="-Dlog4j.configuration=${basedir}/log4j.properties"/>
+            <jvmarg value="-client" />
+            <arg line="-b ${benchmark}" />
+            <arg line="-c ${config}" />
+            <arg line="--dialects-export true" />
+            <classpath refid='project.classpath' />
+            <assertions><enable/></assertions>
+        </java>
+    </target>
+    
+    
+</project>

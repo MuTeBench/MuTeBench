@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<parameters>
+	<benchmark>tpcc</benchmark>
+	<window>10</window>
+		<sla>
+			<name>@STANDARDTENANT#tid@</name>
+			<transactions>ALL</transactions>
+			<target>@SCHEMA TENANT#tid@</target>
+			<metric>LATENCY_AVERAGE</metric>	
+			<serviceLevels>
+				<sl>
+					<metricAmount>1</metricAmount>
+					<penaltyAmount>100</penaltyAmount>
+				</sl>
+				<sl>
+					<metricAmount>2</metricAmount>
+					<penaltyAmount>1000</penaltyAmount>
+				</sl>
+			</serviceLevels>
+		</sla>
+</parameters>
+

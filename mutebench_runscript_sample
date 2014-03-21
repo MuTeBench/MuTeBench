@@ -1,0 +1,1 @@
+java  -Xmx8G -cp `./classpath.sh bin` -Dlog4j.configuration=log4j.properties com.oltpbenchmark.multitenancy.MuTeBench --scenario scenarios/mutebench_scenario_sample.xml -o results/sample -histograms --analysis-buckets 60 --gui
